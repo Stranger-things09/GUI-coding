@@ -1,0 +1,183 @@
+#================================================================================
+# IS 340-01 PROJECT 3
+# Ramone's House of Body Art                                 December 8th 2025
+#================================================================================
+from tkinter import *
+from tkinter import messagebox, ttk
+import tkinter as tk
+from datetime import datetime
+
+main_window = Tk() # Creates a window 
+main_window.title("Ramone’s House of Body Art")
+main_window.geometry("800x600")
+main_window.configure(bg="#f0f0f0")
+
+header_img = PhotoImage(file="heading.png") #Puts the image in the header section
+header_label = Label(main_window, image=header_img, bg="#f0f0f0")
+header_label.image = header_img
+header_label.grid(row=0, column=0, columnspan=4, pady=(10,5))
+
+workOrder = StringVar()
+
+CPJ = IntVar() # for Custom paint Job
+PT = IntVar() # for Performance Tires
+AI = IntVar() # for Alarm Installation
+
+LS = IntVar() # for Leather Seats
+CA = IntVar() # for Custom Audio
+HTU = IntVar() #for Headlights/Tailights Upgrad
+
+WT = IntVar() # for main_window Tinting
+SR = IntVar() # for Sun Roof
+
+nameLabel = Label(main_window, text="Customer Name:")
+nameText = Entry(main_window) #Entry is where you input the details
+nameLabel.grid(row=2, column=1, sticky = E) # sticky = E refers to the alignment 
+nameText.grid(row=2, column=2, columnspan=2, sticky=W)
+
+CarTypeLabel = Label(main_window, text="Car Type: ")
+CarTypeLabel.grid(row=4, column=0, sticky=W)#Grid is used to position the label
+
+workRaceCar = Radiobutton(main_window, text="Race Car",
+                          variable=workOrder,
+                          value="Race Car")
+workClassicCar = Radiobutton(main_window, text="Classic Car",
+                             variable=workOrder,
+                             value="Classic Car")
+workTowTruck = Radiobutton(main_window, text="Tow Truck",
+                           variable=workOrder,
+                           value = "Tow Truck")
+
+workRaceCar.grid(row=5, column=1, sticky=W)
+workClassicCar.grid(row=5, column=2, sticky=S)
+workTowTruck.grid(row=5, column=3, sticky=W)
+
+workRaceCar.select()#Makes the default selection as "Race Car"
+
+choicesLabel = Label(main_window, text="Customization choices: ")
+choicesLabel.grid(row=7, column=0, sticky=W)
+
+btncpj = Checkbutton(main_window, text="Custom paint Job",
+                     variable=CPJ, onvalue=1, offvalue=0)
+btnpt = Checkbutton(main_window, text="Performance Tires",
+                    variable=PT, onvalue=1, offvalue=0)
+btnai = Checkbutton(main_window, text="Alarm Installation",
+                    variable=AI, onvalue=1, offvalue=0)
+btnls = Checkbutton(main_window, text="Leather Seats",
+                    variable=LS, onvalue=1, offvalue=0)
+btnca = Checkbutton(main_window, text="Custom Audio",
+                    variable=CA, onvalue=1, offvalue=0)
+btnhtu = Checkbutton(main_window, text="Headlight/Taillight Upgrades",
+                    variable=HTU, onvalue=1, offvalue=0)
+btnwt = Checkbutton(main_window, text="main_window Tinting",
+                    variable=WT, onvalue=1, offvalue=0)
+btnsr = Checkbutton(main_window, text="Sun Roof",
+                    variable=SR, onvalue=1, offvalue=0)
+
+btncpj.grid(row=8, column=0, sticky=W)
+btnpt.grid(row=9, column=0, sticky=W)
+btnai.grid(row=10, column=0, sticky=W)
+
+btnls.grid(row=8, column=2, sticky=W)
+btnca.grid(row=9, column=2, sticky=W)
+btnhtu.grid(row=10, column=2, sticky=W)
+
+btnwt.grid(row=8, column=3, sticky=W)
+btnsr.grid(row=9, column=3, sticky=W)
+
+paymentLabel = Label(main_window, text="Payment Type:")
+paymentLabel.grid(row=14, column=2, sticky=W, pady=(20,0))
+
+#Creates a Combobox pick-list
+combo = ttk.Combobox(
+    values = ["Visa","Master Card", "American Express", "Cash"],
+)
+combo.grid(row=15, column=2, sticky=W, pady=(0,10))#Can also use Combo.place function to place it in the window
+
+# Creates a call to function action to take down the choices selected.
+def writeToLog():
+    if not nameText.get().strip():
+        messagebox.showerror("Invalid User Input", "Please enter the customer name")
+        return
+     
+    if not combo.get().strip():
+        messagebox.showerror("Invalid User Input", "Please enter a payment type")
+        return
+
+    now = datetime.now().strftime("%m/%d/%Y %H:%M %p")
+    log = open("orders.txt", "a")
+    log.write(f"Customer Name:      {nameText.get()} \n")
+    log.write(f"Car Type:           {workOrder.get()} \n")
+    log.write(f"Customization Choices: \n")
+    
+    # Check each variable. If it is 1 (checked), write the name.
+    if CPJ.get() == 1:
+        log.write("      - Custom Paint Job\n")
+    if PT.get() == 1:
+        log.write("      - Performance Tires\n")
+    if AI.get() == 1:
+        log.write("      - Alarm Installation\n")
+    if LS.get() == 1:
+        log.write("      - Leather Seats\n")
+    if CA.get() == 1:
+        log.write("      - Custom Audio\n")
+    if HTU.get() == 1:
+        log.write("      - Headlight/Taillight Upgrades\n")
+    if WT.get() == 1:
+        log.write("      - Window Tinting\n")
+    if SR.get() == 1:
+        log.write("      - Sun Roof\n")
+
+    log.write(f"Card: {combo.get()} \n")
+    log.write(f"Order Placed At: {now} \n")
+    log.write("====================================================================\n\n")
+    log.close()
+
+def resetFields():
+    nameText.delete(0, END)
+    
+    btncpj.deselect()
+    btnpt.deselect()
+    btnai.deselect()
+    btnls.deselect()
+    btnca.deselect()
+    btnhtu.deselect()
+    btnwt.deselect()
+    btnsr.deselect()
+
+    combo.set("")
+    workRaceCar.select()
+
+clear = Button(main_window, text="Clear", command=resetFields)#Calls the function resetFields
+submit = Button(main_window, text="Submit", command=writeToLog)#Calls the function writeToLog
+
+submit.grid(row=20, column=1, sticky=E, pady=(10,0))
+clear.grid(row=20, column=3, sticky=W, pady=(10,0))
+
+main_window.mainloop()
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+           
